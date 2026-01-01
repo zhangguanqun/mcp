@@ -1,0 +1,11 @@
+# llms.txt
+This site indexes the MoviePy 2.x API docs.
+
+## Docs
+
+- [Getting Started](https://zulko.github.io/moviepy/getting_started/overview.html)
+- [VideoClip](https://zulko.github.io/moviepy/reference/VideoClip/VideoClip.html)
+- [CompositeVideoClip](https://zulko.github.io/moviepy/reference/VideoClip/CompositeVideoClip.html)
+- [AudioClip](https://zulko.github.io/moviepy/reference/AudioClip/AudioClip.html)
+- [Video FX](https://zulko.github.io/moviepy/reference/video/video_fx.html)
+- [Audio FX](https://zulko.github.io/moviepy/reference/audio/audio_fx.html)
