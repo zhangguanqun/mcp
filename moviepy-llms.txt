@@ -1,11 +1,191 @@
-# llms.txt
-This site indexes the MoviePy 2.x API docs.
+# MoviePy Skills for AI Video Agents
+This skill equips AI agents with reliable, production-ready knowledge of MoviePy 2.x.
+Use this when performing video editing, compositing, transitions, audio mixing, and exporting.
 
-## Docs
+MoviePy is a Python library built on FFmpeg. It supports:
+- Loading / trimming / resizing video
+- Combining multiple clips into one timeline
+- Adding overlays, subtitles, logos
+- Adding + mixing audio / BGM / VO
+- Exporting final videos safely
 
-- [Getting Started](https://zulko.github.io/moviepy/getting_started/overview.html)
-- [VideoClip](https://zulko.github.io/moviepy/reference/VideoClip/VideoClip.html)
-- [CompositeVideoClip](https://zulko.github.io/moviepy/reference/VideoClip/CompositeVideoClip.html)
-- [AudioClip](https://zulko.github.io/moviepy/reference/AudioClip/AudioClip.html)
-- [Video FX](https://zulko.github.io/moviepy/reference/video/video_fx.html)
-- [Audio FX](https://zulko.github.io/moviepy/reference/audio/audio_fx.html)
+=====================================================
+🔥 IMPORTANT RULES (Avoid Hallucinations & Bugs)
+=====================================================
+- ALWAYS assume MoviePy version = 2.x+
+- NEVER use deprecated APIs:
+  ❌ clip.fx(...)
+  ❌ clip.volumex(...)
+  ❌ clip.set_audio_end()
+- ALWAYS import FX explicitly:
+
+Video FX:
+    from moviepy.video.fx.all import resize, speedx, fadein, fadeout
+
+Audio FX:
+    from moviepy.audio.fx.all import volumex, audio_fadein, audio_fadeout
+
+Audio Volume MUST use:
+    new_audio = volumex(audio_clip, 0.5)
+
+Composite MUST use:
+    from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
+
+
+=====================================================
+🎬 Core Concepts
+=====================================================
+A `VideoClip` represents a piece of video.
+An `AudioClip` represents audio.
+A `CompositeVideoClip` is like a timeline with layers.
+
+Everything eventually becomes:
+    final = CompositeVideoClip([...])
+    final.write_videofile("output.mp4", fps=30, codec="libx264", audio_codec="aac")
+
+Always specify:
+- fps
+- codec
+- audio_codec
+To avoid unpredictable export behavior.
+
+
+=====================================================
+📥 Loading Media
+=====================================================
+Load video:
+    from moviepy.editor import VideoFileClip
+    video = VideoFileClip("input.mp4")
+
+Trim:
+    video = video.subclip(start, end)
+
+Resize:
+    from moviepy.video.fx.all import resize
+    video = resize(video, width=1080)
+
+16:9 → 9:16 safe crop:
+    video = video.crop(x_center, y_center, width, height)
+
+
+=====================================================
+🎞️ Combining Clips (Timeline Editing)
+=====================================================
+Concatenate sequentially:
+    from moviepy.editor import concatenate_videoclips
+    final = concatenate_videoclips([clip1, clip2, clip3])
+
+Overlay multiple layers:
+    from moviepy.video.compositing.CompositeVideoClip import CompositeVideoClip
+    final = CompositeVideoClip([background, overlay, text_layer])
+
+Position overlay:
+    overlay = overlay.set_position(("center", "bottom"))
+
+Time placement:
+    overlay = overlay.set_start(2.0)
+
+
+=====================================================
+🎵 Audio Handling
+=====================================================
+Attach audio:
+    video = video.set_audio(audio_clip)
+
+Adjust volume:
+    from moviepy.audio.fx.all import volumex
+    quieter = volumex(audio_clip, 0.4)
+
+Fade in/out:
+    from moviepy.audio.fx.all import audio_fadein, audio_fadeout
+    audio = audio_fadein(audio, 1.0)
+    audio = audio_fadeout(audio, 1.0)
+
+Mix BGM + Voiceover:
+    from moviepy.editor import CompositeAudioClip
+    mixed = CompositeAudioClip([voiceover, bgm])
+    video = video.set_audio(mixed)
+
+
+=====================================================
+📌 Transitions
+=====================================================
+Fade in video:
+    from moviepy.video.fx.all import fadein
+    clip = fadein(clip, 1.0)
+
+Fade out:
+    from moviepy.video.fx.all import fadeout
+    clip = fadeout(clip, 1.0)
+
+Crossfade:
+    concatenate_videoclips(clips, method="compose", transition=fade_duration)
+
+
+=====================================================
+🔍 Subtitles / Text
+=====================================================
+    from moviepy.editor import TextClip
+    text = TextClip(
+        "Hello Spark",
+        fontsize=60,
+        color="white"
+    ).set_duration(3)
+
+    text = text.set_position(("center", "bottom"))
+
+    final = CompositeVideoClip([video, text])
+
+
+=====================================================
+🚀 Export Best Practices
+=====================================================
+ALWAYS export like this:
+
+    final.write_videofile(
+        "final.mp4",
+        fps=30,
+        codec="libx264",
+        audio_codec="aac",
+        bitrate="5000k"
+    )
+
+Avoid:
+    write_gif
+    experimental codecs
+    missing FPS
+
+
+=====================================================
+❌ Common Pitfall Guardrails
+=====================================================
+- Do NOT use `.fx()` (removed in MoviePy 2)
+- Do NOT assume `.volumex()` exists as method
+- Do NOT assume blocking execution; MoviePy is synchronous
+- Always close files if handling many clips
+
+
+=====================================================
+📚 Reference Docs
+=====================================================
+Primary Docs:
+https://zulko.github.io/moviepy/reference/index.html
+
+VideoClip:
+https://zulko.github.io/moviepy/reference/VideoClip/VideoClip.html
+
+CompositeVideoClip:
+https://zulko.github.io/moviepy/reference/VideoClip/CompositeVideoClip.html
+
+AudioClip:
+https://zulko.github.io/moviepy/reference/AudioClip/AudioClip.html
+
+Video FX:
+https://zulko.github.io/moviepy/reference/video/video_fx.html
+
+Audio FX:
+https://zulko.github.io/moviepy/reference/audio/audio_fx.html
+
+=====================================================
+End of Skill
+=====================================================
